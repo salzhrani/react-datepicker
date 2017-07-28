@@ -315,6 +315,16 @@ extend(getPrototypeOf(moment.localeData()), {
     }
   },
 })
+const preparse = (string) => {
+    if (!string) {
+        return string;
+    }
+    return string
+        .replace(/[١٢٣٤٥٦٧٨٩٠]/g, function (match) {
+            return numberMap[match]
+        })
+        .replace(/،/g, ',')
+};
 const iMonthNames = {
     iMonths: 'محرم_صفر_ربيع الأول_ربيع الثاني_جمادى الأولى_جمادى الآخرة_رجب_شعبان_رمضان_شوال_ذو القعدة_ذو الحجة'.split(
         '_'
@@ -375,13 +385,7 @@ const iMonthNames = {
         y: 'سنة',
         yy: '%d سنوات',
     },
-    preparse(string) {
-        return string
-            .replace(/[١٢٣٤٥٦٧٨٩٠]/g, function (match) {
-                return numberMap[match]
-            })
-            .replace(/،/g, ',')
-    },
+    preparse,
     postformat(string) {
         return string
             .replace(/\d/g, function (match) {
@@ -654,8 +658,12 @@ function iWeekOfYear(mom, firstDayOfWeek, firstDayOfWeekOfYear) {
   ************************************/
 
 function makeMoment(input, format, lang, utc) {
+    let preparsed = input;
+    if (typeof input === 'string') {
+        preparsed = preparse(input);
+    }
     var config = {
-            _i: input,
+            _i: preparsed,
             _f: format,
             _l: lang,
         },
@@ -670,7 +678,7 @@ function makeMoment(input, format, lang, utc) {
             if (date[0] > 0) {
               removeParsedTokens(config)
               format = 'YYYY-MM-DD-' + config._f
-              input =
+              preparsed =
                   leftZeroFill(date[0], 4) +
                   '-' +
                   leftZeroFill(date[1] + 1, 2) +
@@ -681,8 +689,8 @@ function makeMoment(input, format, lang, utc) {
             }
         }
     }
-    if (utc) m = moment.utc(input, format, lang)
-    else m = moment(input, format, lang)
+    if (utc) m = moment.utc(preparsed, format, lang)
+    else m = moment(preparsed, format, lang)
     if (config._isValid === false) m._isValid = false
     m._hDiff = config._hDiff || 0
     hm = objectCreate(hMoment.fn)
