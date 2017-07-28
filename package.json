@@ -1,8 +1,8 @@
 {
   "author": "HackerOne",
-  "name": "react-datepicker",
+  "name": "react-datepicker-hijri",
   "description": "A simple and reusable datepicker component for React",
-  "version": "0.52.0",
+  "version": "0.60.1",
   "license": "MIT",
   "homepage": "https://github.com/Hacker0x01/react-datepicker",
   "main": "dist/react-datepicker.min.js",

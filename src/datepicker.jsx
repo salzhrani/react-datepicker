@@ -476,3 +476,5 @@ export default class DatePicker extends React.Component {
     )
   }
 }
+
+export { moment }
