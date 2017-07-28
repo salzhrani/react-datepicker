@@ -26,6 +26,7 @@ export default class Week extends React.Component {
     selectsEnd: PropTypes.bool,
     selectsStart: PropTypes.bool,
     showWeekNumber: PropTypes.bool,
+    hijri: PropTypes.bool,
     startDate: PropTypes.object,
     utcOffset: PropTypes.number
   }
@@ -89,6 +90,7 @@ export default class Week extends React.Component {
             startDate={this.props.startDate}
             endDate={this.props.endDate}
             dayClassName={this.props.dayClassName}
+            hijri={this.props.hijri}
             utcOffset={this.props.utcOffset}/>
       )
     }))

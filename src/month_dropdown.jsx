@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import MonthDropdownOptions from './month_dropdown_options'
 import onClickOutside from 'react-onclickoutside'
-import moment from 'moment'
+import moment from './moment-hijri'
 
 const WrappedMonthDropdownOptions = onClickOutside(MonthDropdownOptions)
 

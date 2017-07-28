@@ -1,5 +1,5 @@
 import React from 'react'
-import moment from 'moment'
+import moment from '../src/moment-hijri'
 import Day from '../src/day'
 import { shallow } from 'enzyme'
 import { getDayOfWeekCode } from '../src/date_utils'

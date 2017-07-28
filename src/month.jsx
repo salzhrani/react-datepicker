@@ -5,6 +5,11 @@ import Week from './week'
 
 const FIXED_HEIGHT_STANDARD_WEEK_COUNT = 6
 
+function isSame (input, other, units) {
+  const inputMs = input.valueOf()
+  return other.clone().startOf(units).valueOf() <= inputMs && inputMs <= other.clone().endOf(units).valueOf()
+}
+
 export default class Month extends React.Component {
   static propTypes = {
     day: PropTypes.object.isRequired,
@@ -30,6 +35,7 @@ export default class Month extends React.Component {
     selectsEnd: PropTypes.bool,
     selectsStart: PropTypes.bool,
     showWeekNumbers: PropTypes.bool,
+    hijri: PropTypes.bool,
     startDate: PropTypes.object,
     utcOffset: PropTypes.number
   }
@@ -54,14 +60,20 @@ export default class Month extends React.Component {
 
   isWeekInMonth = (startOfWeek) => {
     const day = this.props.day
+    const unit = this.props.hijri ? 'imonth' : 'month'
     const endOfWeek = startOfWeek.clone().add(6, 'days')
-    return startOfWeek.isSame(day, 'month') || endOfWeek.isSame(day, 'month')
+    return isSame(day, startOfWeek, unit) || isSame(day, endOfWeek, unit)
   }
 
   renderWeeks = () => {
     const weeks = []
     var isFixedHeight = this.props.fixedHeight
-    let currentWeekStart = this.props.day.clone().startOf('month').startOf('week')
+    let currentWeekStart
+    if (this.props.hijri) {
+      currentWeekStart = this.props.day.clone().startOf('imonth').startOf('week')
+    } else {
+      currentWeekStart = this.props.day.clone().startOf('month').startOf('week')
+    }
     let i = 0
     let breakAfterNextPush = false
 
@@ -69,7 +81,7 @@ export default class Month extends React.Component {
       weeks.push(<Week
           key={i}
           day={currentWeekStart}
-          month={this.props.day.month()}
+          month={this.props.hijri ? this.props.day.iMonth() : this.props.day.month()}
           onDayClick={this.handleDayClick}
           onDayMouseEnter={this.handleDayMouseEnter}
           onWeekSelect={this.props.onWeekSelect}
@@ -89,6 +101,7 @@ export default class Month extends React.Component {
           showWeekNumber={this.props.showWeekNumbers}
           startDate={this.props.startDate}
           endDate={this.props.endDate}
+          hijri={this.props.hijri}
           dayClassName={this.props.dayClassName}
           utcOffset={this.props.utcOffset}/>)
 

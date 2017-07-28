@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment from './moment-hijri'
 import YearDropdown from './year_dropdown'
 import MonthDropdown from './month_dropdown'
 import Month from './month'
@@ -58,6 +58,7 @@ export default class Calendar extends React.Component {
     startDate: PropTypes.object,
     todayButton: PropTypes.string,
     useWeekdaysShort: PropTypes.bool,
+    hijri: PropTypes.bool,
     utcOffset: PropTypes.number,
     weekLabel: PropTypes.string,
     yearDropdownItemNumber: PropTypes.number
@@ -225,7 +226,7 @@ export default class Calendar extends React.Component {
           onChange={this.changeYear}
           minDate={this.props.minDate}
           maxDate={this.props.maxDate}
-          year={this.state.date.year()}
+          year={this.props.hijri ? this.state.date.iYear() : this.state.date.year()}
           scrollableYearDropdown={this.props.scrollableYearDropdown}
           yearDropdownItemNumber={this.props.yearDropdownItemNumber} />
     )
@@ -241,7 +242,7 @@ export default class Calendar extends React.Component {
           locale={this.props.locale}
           dateFormat={this.props.dateFormat}
           onChange={this.changeMonth}
-          month={this.state.date.month()} />
+          month={this.props.hijri ? this.state.date.iMonth() : this.state.date.month()} />
     )
   }
 
@@ -301,6 +302,7 @@ export default class Calendar extends React.Component {
                 showWeekNumbers={this.props.showWeekNumbers}
                 startDate={this.props.startDate}
                 endDate={this.props.endDate}
+                hijri={this.props.hijri}
                 peekNextMonth={this.props.peekNextMonth}
                 utcOffset={this.props.utcOffset}/>
           </div>

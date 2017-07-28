@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment from './moment-hijri'
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
@@ -19,6 +19,7 @@ export default class Day extends React.Component {
     selectingDate: PropTypes.object,
     selectsEnd: PropTypes.bool,
     selectsStart: PropTypes.bool,
+    hijri: PropTypes.bool,
     startDate: PropTypes.object,
     utcOffset: PropTypes.number
   }
@@ -56,7 +57,7 @@ export default class Day extends React.Component {
     const classNames = {}
     for (let i = 0, len = highlightDates.length; i < len; i++) {
       const obj = highlightDates[i]
-      if (obj instanceof moment) {
+      if (moment.isMoment(obj)) {
         if (isSameDay(day, obj)) {
           classNames[defaultClassName] = true
         }
@@ -175,14 +176,15 @@ export default class Day extends React.Component {
   }
 
   render () {
+    const date = this.props.hijri ? this.props.day.iDate() : this.props.day.date()
     return (
       <div
           className={this.getClassNames(this.props.day)}
           onClick={this.handleClick}
           onMouseEnter={this.handleMouseEnter}
-          aria-label={`day-${this.props.day.date()}`}
+          aria-label={`day-${date}`}
           role="option">
-          {this.props.day.date()}
+          {date}
       </div>
     )
   }

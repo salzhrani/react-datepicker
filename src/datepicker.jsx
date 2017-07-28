@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import PopperComponent, { popperPlacementPositions } from './popper_component'
 import classnames from 'classnames'
 import { isSameDay, isDayDisabled, isDayInRange, getEffectiveMinDate, getEffectiveMaxDate, parseDate, safeDateFormat } from './date_utils'
-import moment from 'moment'
+import moment from './moment-hijri'
 import onClickOutside from 'react-onclickoutside'
 
 const outsideClickIgnoreClass = 'react-datepicker-ignore-onclickoutside'
@@ -81,6 +81,7 @@ export default class DatePicker extends React.Component {
     value: PropTypes.string,
     weekLabel: PropTypes.string,
     withPortal: PropTypes.bool,
+    hijri: PropTypes.bool,
     yearDropdownItemNumber: PropTypes.number
   }
 
@@ -101,7 +102,8 @@ export default class DatePicker extends React.Component {
       onMonthChange () {},
       utcOffset: moment().utcOffset(),
       monthsShown: 1,
-      withPortal: false
+      withPortal: false,
+      hijri: false
     }
   }
 
@@ -382,6 +384,7 @@ export default class DatePicker extends React.Component {
         onMonthChange={this.props.onMonthChange}
         dayClassName={this.props.dayClassName}
         className={this.props.calendarClassName}
+        hijri={this.props.hijri}
         yearDropdownItemNumber={this.props.yearDropdownItemNumber}>
       {this.props.children}
     </WrappedCalendar>
