@@ -125,13 +125,13 @@ export default class Calendar extends React.Component {
 
   increaseMonth = () => {
     this.setState({
-      date: this.state.date.clone().add(1, 'month')
+      date: this.state.date.clone().add(1, this.props.hijri ? 'iMonth' : 'month')
     }, () => this.handleMonthChange(this.state.date))
   }
 
   decreaseMonth = () => {
     this.setState({
-      date: this.state.date.clone().subtract(1, 'month')
+      date: this.state.date.clone().subtract(1, this.props.hijri ? 'iMonth' : 'month')
     }, () => this.handleMonthChange(this.state.date))
   }
 
@@ -149,13 +149,13 @@ export default class Calendar extends React.Component {
 
   changeYear = (year) => {
     this.setState({
-      date: this.state.date.clone().set('year', year)
+      date: this.state.date.clone()[this.props.hijri ? 'iYear' : 'year'](year)
     })
   }
 
   changeMonth = (month) => {
     this.setState({
-      date: this.state.date.clone().set('month', month)
+      date: this.state.date.clone()[this.props.hijri ? 'iMonth' : 'month'](month)
     }, () => this.handleMonthChange(this.state.date))
   }
 
@@ -183,7 +183,7 @@ export default class Calendar extends React.Component {
   }
 
   renderPreviousMonthButton = () => {
-    if (!this.props.forceShowMonthNavigation && allDaysDisabledBefore(this.state.date, 'month', this.props)) {
+    if (!this.props.forceShowMonthNavigation && allDaysDisabledBefore(this.state.date, this.props.hijri ? 'iMonth' : 'month', this.props)) {
       return
     }
     return <a
@@ -192,7 +192,7 @@ export default class Calendar extends React.Component {
   }
 
   renderNextMonthButton = () => {
-    if (!this.props.forceShowMonthNavigation && allDaysDisabledAfter(this.state.date, 'month', this.props)) {
+    if (!this.props.forceShowMonthNavigation && allDaysDisabledAfter(this.state.date, this.props.hijri ? 'iMonth' : 'month', this.props)) {
       return
     }
     return <a
@@ -226,6 +226,7 @@ export default class Calendar extends React.Component {
           onChange={this.changeYear}
           minDate={this.props.minDate}
           maxDate={this.props.maxDate}
+          hijri={this.props.hijri}
           year={this.props.hijri ? this.state.date.iYear() : this.state.date.year()}
           scrollableYearDropdown={this.props.scrollableYearDropdown}
           yearDropdownItemNumber={this.props.yearDropdownItemNumber} />
@@ -240,6 +241,7 @@ export default class Calendar extends React.Component {
       <MonthDropdown
           dropdownMode={this.props.dropdownMode}
           locale={this.props.locale}
+          hijri={this.props.hijri}
           dateFormat={this.props.dateFormat}
           onChange={this.changeMonth}
           month={this.props.hijri ? this.state.date.iMonth() : this.state.date.month()} />

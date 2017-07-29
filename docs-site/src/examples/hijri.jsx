@@ -29,6 +29,7 @@ export default class CustomStartDate extends React.Component {
             onChange={this.handleChange}
             locale="ar-sa"
             hijri
+            showYearDropdown
             dateFormat="iDD/iMM/iYYYY"
             dateFormatCalendar="iMMMM iYYYY"
             placeholderText="Weeks start on Monday" />

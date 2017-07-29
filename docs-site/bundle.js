@@ -39241,7 +39241,7 @@
 
 	    _this.increaseMonth = function () {
 	      _this.setState({
-	        date: _this.state.date.clone().add(1, 'month')
+	        date: _this.state.date.clone().add(1, _this.props.hijri ? 'iMonth' : 'month')
 	      }, function () {
 	        return _this.handleMonthChange(_this.state.date);
 	      });
@@ -39249,7 +39249,7 @@
 
 	    _this.decreaseMonth = function () {
 	      _this.setState({
-	        date: _this.state.date.clone().subtract(1, 'month')
+	        date: _this.state.date.clone().subtract(1, _this.props.hijri ? 'iMonth' : 'month')
 	      }, function () {
 	        return _this.handleMonthChange(_this.state.date);
 	      });
@@ -39275,13 +39275,13 @@
 
 	    _this.changeYear = function (year) {
 	      _this.setState({
-	        date: _this.state.date.clone().set('year', year)
+	        date: _this.state.date.clone()[_this.props.hijri ? 'iYear' : 'year'](year)
 	      });
 	    };
 
 	    _this.changeMonth = function (month) {
 	      _this.setState({
-	        date: _this.state.date.clone().set('month', month)
+	        date: _this.state.date.clone()[_this.props.hijri ? 'iMonth' : 'month'](month)
 	      }, function () {
 	        return _this.handleMonthChange(_this.state.date);
 	      });
@@ -39311,7 +39311,7 @@
 	    };
 
 	    _this.renderPreviousMonthButton = function () {
-	      if (!_this.props.forceShowMonthNavigation && (0, _date_utils.allDaysDisabledBefore)(_this.state.date, 'month', _this.props)) {
+	      if (!_this.props.forceShowMonthNavigation && (0, _date_utils.allDaysDisabledBefore)(_this.state.date, _this.props.hijri ? 'iMonth' : 'month', _this.props)) {
 	        return;
 	      }
 	      return _react2.default.createElement('a', {
@@ -39320,7 +39320,7 @@
 	    };
 
 	    _this.renderNextMonthButton = function () {
-	      if (!_this.props.forceShowMonthNavigation && (0, _date_utils.allDaysDisabledAfter)(_this.state.date, 'month', _this.props)) {
+	      if (!_this.props.forceShowMonthNavigation && (0, _date_utils.allDaysDisabledAfter)(_this.state.date, _this.props.hijri ? 'iMonth' : 'month', _this.props)) {
 	        return;
 	      }
 	      return _react2.default.createElement('a', {
@@ -39357,6 +39357,7 @@
 	        onChange: _this.changeYear,
 	        minDate: _this.props.minDate,
 	        maxDate: _this.props.maxDate,
+	        hijri: _this.props.hijri,
 	        year: _this.props.hijri ? _this.state.date.iYear() : _this.state.date.year(),
 	        scrollableYearDropdown: _this.props.scrollableYearDropdown,
 	        yearDropdownItemNumber: _this.props.yearDropdownItemNumber });
@@ -39371,6 +39372,7 @@
 	      return _react2.default.createElement(_month_dropdown2.default, {
 	        dropdownMode: _this.props.dropdownMode,
 	        locale: _this.props.locale,
+	        hijri: _this.props.hijri,
 	        dateFormat: _this.props.dateFormat,
 	        onChange: _this.changeMonth,
 	        month: _this.props.hijri ? _this.state.date.iMonth() : _this.state.date.month() });
@@ -39740,6 +39742,14 @@
 	        }
 	    }
 	});
+	var preparse = function preparse(string) {
+	    if (!string) {
+	        return string;
+	    }
+	    return string.replace(/[١٢٣٤٥٦٧٨٩٠]/g, function (match) {
+	        return numberMap[match];
+	    }).replace(/،/g, ',');
+	};
 	var iMonthNames = {
 	    iMonths: 'محرم_صفر_ربيع الأول_ربيع الثاني_جمادى الأولى_جمادى الآخرة_رجب_شعبان_رمضان_شوال_ذو القعدة_ذو الحجة'.split('_'),
 	    iMonthsShort: 'محرم_صفر_ربيع ١_ربيع ٢_جمادى ١_جمادى ٢_رجب_شعبان_رمضان_شوال_ذو القعدة_ذو الحجة'.split('_'),
@@ -39793,11 +39803,7 @@
 	        y: 'سنة',
 	        yy: '%d سنوات'
 	    },
-	    preparse: function preparse(string) {
-	        return string.replace(/[١٢٣٤٥٦٧٨٩٠]/g, function (match) {
-	            return numberMap[match];
-	        }).replace(/،/g, ',');
-	    },
+	    preparse: preparse,
 	    postformat: function postformat(string) {
 	        return string.replace(/\d/g, function (match) {
 	            return symbolMap[match];
@@ -40056,8 +40062,12 @@
 	  ************************************/
 
 	function makeMoment(input, format, lang, utc) {
+	    var preparsed = input;
+	    if (typeof input === 'string') {
+	        preparsed = preparse(input);
+	    }
 	    var config = {
-	        _i: input,
+	        _i: preparsed,
 	        _f: format,
 	        _l: lang
 	    },
@@ -40072,11 +40082,11 @@
 	            if (date[0] > 0) {
 	                removeParsedTokens(config);
 	                format = 'YYYY-MM-DD-' + config._f;
-	                input = leftZeroFill(date[0], 4) + '-' + leftZeroFill(date[1] + 1, 2) + '-' + leftZeroFill(date[2], 2) + '-' + config._i;
+	                preparsed = leftZeroFill(date[0], 4) + '-' + leftZeroFill(date[1] + 1, 2) + '-' + leftZeroFill(date[2], 2) + '-' + config._i;
 	            }
 	        }
 	    }
-	    if (utc) m = _moment2.default.utc(input, format, lang);else m = (0, _moment2.default)(input, format, lang);
+	    if (utc) m = _moment2.default.utc(preparsed, format, lang);else m = (0, _moment2.default)(preparsed, format, lang);
 	    if (config._isValid === false) m._isValid = false;
 	    m._hDiff = config._hDiff || 0;
 	    hm = objectCreate(hMoment.fn);
@@ -61916,6 +61926,7 @@
 	            onChange: this.handleChange,
 	            locale: 'ar-sa',
 	            hijri: true,
+	            showYearDropdown: true,
 	            dateFormat: 'iDD/iMM/iYYYY',
 	            dateFormatCalendar: 'iMMMM iYYYY',
 	            placeholderText: 'Weeks start on Monday' })
